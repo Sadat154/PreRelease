@@ -1,0 +1,31 @@
+Understanding the puzzle files and their format:
+Line 1: Number of different symbols you may use (i.e., 3)
+Line 2-4 (Inc): State the actual symbols that may be used
+Line 5: States the number of different patterns you will get points for
+Line 6-8: The patterns themselves, note that the format is a spiral from top left to middle (e.g., QQ**Q**QQ)
+Line 9: The grid size e.g., 5 = 5x5 Gri
+Line 10: Following 25 Lines simply represent each cell, going from left to right for every row
+2nd Last Line = Score
+Last Line = Turns left
+
+Understand that the rows go from 5-1 and columns from 1-5
+
+
+Problems with the files:
+
+All Puzzles:
+- Row 3, Column 1, Q should be blocked, but it isn't
+- Score increases by 10 when placing a Q in the position specified above
+
+Puzzle4:
+- Row 5, Puzzle 1, Both X & Q are blocked, but they shouldn't be (Solution -> Check blocks upon loading file)
+
+
+Problem with code:
+- Can input negative integers as row column
+- Blocked cell random generation is redundant, what if same int generated twice?
+- Immediately takes a turn away even if the turn did nothing/had no effect, should it do this?
+- The code just adds points, doesnt minus points, the way it works, if a pattern is removed and redone it will add 10, moreover only checks
+for new patterns, doesnt consider what has happened to previous patterns, wrong!
+
+Continue from line 127
