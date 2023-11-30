@@ -111,11 +111,8 @@ class Puzzle():
             if CurrentCell.CheckSymbolAllowed(Symbol):
                 CurrentCell.ChangeSymbolInCell(Symbol)
                 AmountToAddToScore = self.CheckforMatchWithPattern(Row, Column)
-                ExtraScoreOverlap = 0
-                if AmountToAddToScore > 0:
-                    self.__Score += AmountToAddToScore
-                if ExtraScoreOverlap > 0:
-                    self.__Score += ExtraScoreOverlap
+                self.__Score = AmountToAddToScore
+                print(AmountToAddToScore, "TEST")
             if self.__SymbolsLeft == 0:
                 Finished = True
         print()
@@ -130,54 +127,66 @@ class Puzzle():
         else:
             raise IndexError()
 
+    def ResetNotAllowedSymbols(self):
+        for StartRow in range(self.__GridSize, 0, -1):
+            for StartColumn in range(0, self.__GridSize):
+                try:
+
+                    self.__GetCell(StartRow, StartColumn).ResetNotAllowedSymbols()
+                    self.__GetCell(StartRow, StartColumn + 1).ResetNotAllowedSymbols()
+                    self.__GetCell(StartRow, StartColumn + 2).ResetNotAllowedSymbols()
+                    self.__GetCell(StartRow - 1, StartColumn + 2).ResetNotAllowedSymbols()
+                    self.__GetCell(StartRow - 2, StartColumn + 2).ResetNotAllowedSymbols()
+                    self.__GetCell(StartRow - 2, StartColumn + 1).ResetNotAllowedSymbols()
+                    self.__GetCell(StartRow - 2, StartColumn).ResetNotAllowedSymbols()
+                    self.__GetCell(StartRow - 1, StartColumn).ResetNotAllowedSymbols()
+                    self.__GetCell(StartRow - 1, StartColumn + 1).ResetNotAllowedSymbols()
+                except:
+                    pass
+
 
     def CheckforMatchWithPattern(self, Row, Column):
         score = 0
-        for StartRow in range(Row + 2, Row - 1, -1):
-            for StartColumn in range(Column - 2, Column + 1):
-                try:
-                    PatternString = ""
-                    PatternString += self.__GetCell(StartRow, StartColumn).GetSymbol()
-                    PatternString += self.__GetCell(StartRow, StartColumn + 1).GetSymbol()
-                    PatternString += self.__GetCell(StartRow, StartColumn + 2).GetSymbol()
-                    PatternString += self.__GetCell(StartRow - 1, StartColumn + 2).GetSymbol()
-                    PatternString += self.__GetCell(StartRow - 2, StartColumn + 2).GetSymbol()
-                    PatternString += self.__GetCell(StartRow - 2, StartColumn + 1).GetSymbol()
-                    PatternString += self.__GetCell(StartRow - 2, StartColumn).GetSymbol()
-                    PatternString += self.__GetCell(StartRow - 1, StartColumn).GetSymbol()
-                    PatternString += self.__GetCell(StartRow - 1, StartColumn + 1).GetSymbol()
-                    for P in self.__AllowedPatterns:
-                        CurrentSymbol = self.__GetCell(Row, Column).GetSymbol()
-                        if P.MatchesPattern(PatternString, CurrentSymbol):
-                            self.__GetCell(StartRow, StartColumn).AddToNotAllowedSymbols(CurrentSymbol)
-                            self.__GetCell(StartRow, StartColumn + 1).AddToNotAllowedSymbols(CurrentSymbol)
-                            self.__GetCell(StartRow, StartColumn + 2).AddToNotAllowedSymbols(CurrentSymbol)
-                            self.__GetCell(StartRow - 1, StartColumn + 2).AddToNotAllowedSymbols(CurrentSymbol)
-                            self.__GetCell(StartRow - 2, StartColumn + 2).AddToNotAllowedSymbols(CurrentSymbol)
-                            self.__GetCell(StartRow - 2, StartColumn + 1).AddToNotAllowedSymbols(CurrentSymbol)
-                            self.__GetCell(StartRow - 2, StartColumn).AddToNotAllowedSymbols(CurrentSymbol)
-                            self.__GetCell(StartRow - 1, StartColumn).AddToNotAllowedSymbols(CurrentSymbol)
-                            self.__GetCell(StartRow - 1, StartColumn + 1).AddToNotAllowedSymbols(CurrentSymbol)
-                            self.__CurrentPatterns.append([CurrentSymbol,StartRow,StartColumn])
-                            score += 10
+        Chars = self.__AllowedSymbols
 
-                            if CurrentSymbol == "Q":
+        # Need to reset the not allowed symbols and then all good, Reset it all here
+        self.ResetNotAllowedSymbols()
+        for test in range(3):
+            for StartRow in range(self.__GridSize, 0, -1):
+                for StartColumn in range(0, self.__GridSize):
+                    try:
+                        PatternString = ""
+                        PatternString += self.__GetCell(StartRow, StartColumn).GetSymbol()
+                        PatternString += self.__GetCell(StartRow, StartColumn + 1).GetSymbol()
+                        PatternString += self.__GetCell(StartRow, StartColumn + 2).GetSymbol()
+                        PatternString += self.__GetCell(StartRow - 1, StartColumn + 2).GetSymbol()
+                        PatternString += self.__GetCell(StartRow - 2, StartColumn + 2).GetSymbol()
+                        PatternString += self.__GetCell(StartRow - 2, StartColumn + 1).GetSymbol()
+                        PatternString += self.__GetCell(StartRow - 2, StartColumn).GetSymbol()
+                        PatternString += self.__GetCell(StartRow - 1, StartColumn).GetSymbol()
+                        PatternString += self.__GetCell(StartRow - 1, StartColumn + 1).GetSymbol()
+                        for P in self.__AllowedPatterns:
+                            CurrentSymbol = Chars[test]
+                            if P.MatchesPattern(PatternString, CurrentSymbol):
+                                self.__GetCell(StartRow, StartColumn).AddToNotAllowedSymbols(CurrentSymbol)
+                                self.__GetCell(StartRow, StartColumn + 1).AddToNotAllowedSymbols(CurrentSymbol)
+                                self.__GetCell(StartRow, StartColumn + 2).AddToNotAllowedSymbols(CurrentSymbol)
+                                self.__GetCell(StartRow - 1, StartColumn + 2).AddToNotAllowedSymbols(CurrentSymbol)
+                                self.__GetCell(StartRow - 2, StartColumn + 2).AddToNotAllowedSymbols(CurrentSymbol)
+                                self.__GetCell(StartRow - 2, StartColumn + 1).AddToNotAllowedSymbols(CurrentSymbol)
+                                self.__GetCell(StartRow - 2, StartColumn).AddToNotAllowedSymbols(CurrentSymbol)
+                                self.__GetCell(StartRow - 1, StartColumn).AddToNotAllowedSymbols(CurrentSymbol)
+                                self.__GetCell(StartRow - 1, StartColumn + 1).AddToNotAllowedSymbols(CurrentSymbol)
+                                self.__CurrentPatterns.append([CurrentSymbol,StartRow,StartColumn])
+                                score += 10
 
-                                pass # You want to check the empty spaces of Q only
-                            # Look into storing the actual spaces of empty cells of one pattern
-                            # and then comparing these empty cells with a completed pattern, then checking
-                            # to see if an empty cell coordinate = coordinate of an actual cell
 
-                            elif CurrentSymbol == "X":
-                                pass # You want to check the empty spaces of X only
 
-                            elif CurrentSymbol == "T":
-                                pass # Ypi want to check the empty spaces of T only
-                            print(self.__CurrentPatterns)
-                            return score
-                except:
-                    pass
-        return 0
+
+
+                    except:
+                        pass
+        return score
 
     def __GetSymbolFromUser(self):
         Symbol = ""
@@ -256,6 +265,9 @@ class Cell():
 
     def AddToNotAllowedSymbols(self, SymbolToAdd):
         self.__SymbolsNotAllowed.append(SymbolToAdd)
+
+    def ResetNotAllowedSymbols(self, SymbolToAllow):
+        self.__SymbolsNotAllowed.remove(SymbolToAllow)
 
     def UpdateCell(self):
         pass
