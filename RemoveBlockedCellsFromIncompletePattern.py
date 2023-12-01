@@ -150,10 +150,9 @@ class Puzzle():
     def CheckforMatchWithPattern(self, Row, Column):
         score = 0
         Chars = self.__AllowedSymbols
-
         # Need to reset the not allowed symbols and then all good, Reset it all here
         self.ResetNotAllowedSymbols()
-        for test in range(3):
+        for charpos in range(3):
             for StartRow in range(self.__GridSize, 0, -1):
                 for StartColumn in range(0, self.__GridSize):
                     try:
@@ -168,7 +167,7 @@ class Puzzle():
                         PatternString += self.__GetCell(StartRow - 1, StartColumn).GetSymbol()
                         PatternString += self.__GetCell(StartRow - 1, StartColumn + 1).GetSymbol()
                         for P in self.__AllowedPatterns:
-                            CurrentSymbol = Chars[test]
+                            CurrentSymbol = Chars[charpos]
                             if P.MatchesPattern(PatternString, CurrentSymbol):
                                 self.__GetCell(StartRow, StartColumn).AddToNotAllowedSymbols(CurrentSymbol)
                                 self.__GetCell(StartRow, StartColumn + 1).AddToNotAllowedSymbols(CurrentSymbol)
@@ -181,7 +180,6 @@ class Puzzle():
                                 self.__GetCell(StartRow - 1, StartColumn + 1).AddToNotAllowedSymbols(CurrentSymbol)
                                 self.__CurrentPatterns.append([CurrentSymbol,StartRow,StartColumn])
                                 score += 10
-
                     except:
                         pass
         return score
