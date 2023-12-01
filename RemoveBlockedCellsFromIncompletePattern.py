@@ -6,7 +6,7 @@
 import random
 import os
 
-
+##Remove incorrect blocked cells from being loaded included in this
 def Main():
     Again = "y"
     Score = 0
@@ -87,6 +87,7 @@ class Puzzle():
     def AttemptPuzzle(self):
         Finished = False
         while not Finished:
+            self.CheckforMatchWithPattern(0, 0)
             self.DisplayPuzzle()
             print("Current score: " + str(self.__Score))
             Row = -1
@@ -128,21 +129,22 @@ class Puzzle():
             raise IndexError()
 
     def ResetNotAllowedSymbols(self):
-        for StartRow in range(self.__GridSize, 0, -1):
-            for StartColumn in range(0, self.__GridSize):
-                try:
+        for char in self.__AllowedSymbols:
+            for StartRow in range(self.__GridSize, 0, -1):
+                for StartColumn in range(0, self.__GridSize):
+                    try:
 
-                    self.__GetCell(StartRow, StartColumn).ResetNotAllowedSymbols()
-                    self.__GetCell(StartRow, StartColumn + 1).ResetNotAllowedSymbols()
-                    self.__GetCell(StartRow, StartColumn + 2).ResetNotAllowedSymbols()
-                    self.__GetCell(StartRow - 1, StartColumn + 2).ResetNotAllowedSymbols()
-                    self.__GetCell(StartRow - 2, StartColumn + 2).ResetNotAllowedSymbols()
-                    self.__GetCell(StartRow - 2, StartColumn + 1).ResetNotAllowedSymbols()
-                    self.__GetCell(StartRow - 2, StartColumn).ResetNotAllowedSymbols()
-                    self.__GetCell(StartRow - 1, StartColumn).ResetNotAllowedSymbols()
-                    self.__GetCell(StartRow - 1, StartColumn + 1).ResetNotAllowedSymbols()
-                except:
-                    pass
+                        self.__GetCell(StartRow, StartColumn).ResetNotAllowedSymbols(char)
+                        self.__GetCell(StartRow, StartColumn + 1).ResetNotAllowedSymbols(char)
+                        self.__GetCell(StartRow, StartColumn + 2).ResetNotAllowedSymbols(char)
+                        self.__GetCell(StartRow - 1, StartColumn + 2).ResetNotAllowedSymbols(char)
+                        self.__GetCell(StartRow - 2, StartColumn + 2).ResetNotAllowedSymbols(char)
+                        self.__GetCell(StartRow - 2, StartColumn + 1).ResetNotAllowedSymbols(char)
+                        self.__GetCell(StartRow - 2, StartColumn).ResetNotAllowedSymbols(char)
+                        self.__GetCell(StartRow - 1, StartColumn).ResetNotAllowedSymbols(char)
+                        self.__GetCell(StartRow - 1, StartColumn + 1).ResetNotAllowedSymbols(char)
+                    except:
+                        pass
 
 
     def CheckforMatchWithPattern(self, Row, Column):
@@ -179,10 +181,6 @@ class Puzzle():
                                 self.__GetCell(StartRow - 1, StartColumn + 1).AddToNotAllowedSymbols(CurrentSymbol)
                                 self.__CurrentPatterns.append([CurrentSymbol,StartRow,StartColumn])
                                 score += 10
-
-
-
-
 
                     except:
                         pass
