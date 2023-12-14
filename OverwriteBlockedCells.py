@@ -6,7 +6,7 @@
 import random
 import os
 
-##Remove incorrect blocked cells from being loaded included in this
+
 def Main():
     Again = "y"
     Score = 0
@@ -31,13 +31,11 @@ class Puzzle():
             self.__AllowedPatterns = []
             self.__AllowedSymbols = []
             self.__LoadPuzzle(args[0])
-            self.__CurrentPatterns = []
         else:
             self.__Score = 0
             self.__SymbolsLeft = args[1]
             self.__GridSize = args[0]
             self.__Grid = []
-            self.__CurrentPatterns = []
             for Count in range(1, self.__GridSize * self.__GridSize + 1):
                 if random.randrange(1, 101) < 90:
                     C = Cell()
@@ -87,7 +85,6 @@ class Puzzle():
     def AttemptPuzzle(self):
         Finished = False
         while not Finished:
-            self.CheckforMatchWithPattern()
             self.DisplayPuzzle()
             print("Current score: " + str(self.__Score))
             Row = -1
@@ -109,10 +106,16 @@ class Puzzle():
             Symbol = self.__GetSymbolFromUser()
             self.__SymbolsLeft -= 1
             CurrentCell = self.__GetCell(Row, Column)
-            if CurrentCell.CheckSymbolAllowed(Symbol):
+
+            if CurrentCell.GetSymbol() == "@": #NEW
+                self.__Score -= 5 #NEW
+                CurrentCell.ChangeSymbolInCell(Symbol) #NEW
+
+            elif CurrentCell.CheckSymbolAllowed(Symbol):
                 CurrentCell.ChangeSymbolInCell(Symbol)
-                AmountToAddToScore = self.CheckforMatchWithPattern()
-                self.__Score = AmountToAddToScore
+                AmountToAddToScore = self.CheckforMatchWithPattern(Row, Column)
+                if AmountToAddToScore > 0:
+                    self.__Score += AmountToAddToScore
             if self.__SymbolsLeft == 0:
                 Finished = True
         print()
@@ -127,61 +130,36 @@ class Puzzle():
         else:
             raise IndexError()
 
-    def ResetNotAllowedSymbols(self):
-        for char in self.__AllowedSymbols:
-            for StartRow in range(self.__GridSize, 0, -1):
-                for StartColumn in range(0, self.__GridSize):
-                    try:
-
-                        self.__GetCell(StartRow, StartColumn).ResetNotAllowedSymbols(char)
-                        self.__GetCell(StartRow, StartColumn + 1).ResetNotAllowedSymbols(char)
-                        self.__GetCell(StartRow, StartColumn + 2).ResetNotAllowedSymbols(char)
-                        self.__GetCell(StartRow - 1, StartColumn + 2).ResetNotAllowedSymbols(char)
-                        self.__GetCell(StartRow - 2, StartColumn + 2).ResetNotAllowedSymbols(char)
-                        self.__GetCell(StartRow - 2, StartColumn + 1).ResetNotAllowedSymbols(char)
-                        self.__GetCell(StartRow - 2, StartColumn).ResetNotAllowedSymbols(char)
-                        self.__GetCell(StartRow - 1, StartColumn).ResetNotAllowedSymbols(char)
-                        self.__GetCell(StartRow - 1, StartColumn + 1).ResetNotAllowedSymbols(char)
-                    except:
-                        pass
-
-
-    def CheckforMatchWithPattern(self):
-        score = 0
-        Chars = self.__AllowedSymbols
-        # Need to reset the not allowed symbols and then all good, Reset it all here
-        self.ResetNotAllowedSymbols()
-        for charpos in range(3):
-            for StartRow in range(self.__GridSize, 0, -1):
-                for StartColumn in range(0, self.__GridSize):
-                    try:
-                        PatternString = ""
-                        PatternString += self.__GetCell(StartRow, StartColumn).GetSymbol()
-                        PatternString += self.__GetCell(StartRow, StartColumn + 1).GetSymbol()
-                        PatternString += self.__GetCell(StartRow, StartColumn + 2).GetSymbol()
-                        PatternString += self.__GetCell(StartRow - 1, StartColumn + 2).GetSymbol()
-                        PatternString += self.__GetCell(StartRow - 2, StartColumn + 2).GetSymbol()
-                        PatternString += self.__GetCell(StartRow - 2, StartColumn + 1).GetSymbol()
-                        PatternString += self.__GetCell(StartRow - 2, StartColumn).GetSymbol()
-                        PatternString += self.__GetCell(StartRow - 1, StartColumn).GetSymbol()
-                        PatternString += self.__GetCell(StartRow - 1, StartColumn + 1).GetSymbol()
-                        for P in self.__AllowedPatterns:
-                            CurrentSymbol = Chars[charpos]
-                            if P.MatchesPattern(PatternString, CurrentSymbol):
-                                self.__GetCell(StartRow, StartColumn).AddToNotAllowedSymbols(CurrentSymbol)
-                                self.__GetCell(StartRow, StartColumn + 1).AddToNotAllowedSymbols(CurrentSymbol)
-                                self.__GetCell(StartRow, StartColumn + 2).AddToNotAllowedSymbols(CurrentSymbol)
-                                self.__GetCell(StartRow - 1, StartColumn + 2).AddToNotAllowedSymbols(CurrentSymbol)
-                                self.__GetCell(StartRow - 2, StartColumn + 2).AddToNotAllowedSymbols(CurrentSymbol)
-                                self.__GetCell(StartRow - 2, StartColumn + 1).AddToNotAllowedSymbols(CurrentSymbol)
-                                self.__GetCell(StartRow - 2, StartColumn).AddToNotAllowedSymbols(CurrentSymbol)
-                                self.__GetCell(StartRow - 1, StartColumn).AddToNotAllowedSymbols(CurrentSymbol)
-                                self.__GetCell(StartRow - 1, StartColumn + 1).AddToNotAllowedSymbols(CurrentSymbol)
-                                self.__CurrentPatterns.append([CurrentSymbol,StartRow,StartColumn])
-                                score += 10
-                    except:
-                        pass
-        return score
+    def CheckforMatchWithPattern(self, Row, Column):
+        for StartRow in range(Row + 2, Row - 1, -1):
+            for StartColumn in range(Column - 2, Column + 1):
+                try:
+                    PatternString = ""
+                    PatternString += self.__GetCell(StartRow, StartColumn).GetSymbol()
+                    PatternString += self.__GetCell(StartRow, StartColumn + 1).GetSymbol()
+                    PatternString += self.__GetCell(StartRow, StartColumn + 2).GetSymbol()
+                    PatternString += self.__GetCell(StartRow - 1, StartColumn + 2).GetSymbol()
+                    PatternString += self.__GetCell(StartRow - 2, StartColumn + 2).GetSymbol()
+                    PatternString += self.__GetCell(StartRow - 2, StartColumn + 1).GetSymbol()
+                    PatternString += self.__GetCell(StartRow - 2, StartColumn).GetSymbol()
+                    PatternString += self.__GetCell(StartRow - 1, StartColumn).GetSymbol()
+                    PatternString += self.__GetCell(StartRow - 1, StartColumn + 1).GetSymbol()
+                    for P in self.__AllowedPatterns:
+                        CurrentSymbol = self.__GetCell(Row, Column).GetSymbol()
+                        if P.MatchesPattern(PatternString, CurrentSymbol):
+                            self.__GetCell(StartRow, StartColumn).AddToNotAllowedSymbols(CurrentSymbol)
+                            self.__GetCell(StartRow, StartColumn + 1).AddToNotAllowedSymbols(CurrentSymbol)
+                            self.__GetCell(StartRow, StartColumn + 2).AddToNotAllowedSymbols(CurrentSymbol)
+                            self.__GetCell(StartRow - 1, StartColumn + 2).AddToNotAllowedSymbols(CurrentSymbol)
+                            self.__GetCell(StartRow - 2, StartColumn + 2).AddToNotAllowedSymbols(CurrentSymbol)
+                            self.__GetCell(StartRow - 2, StartColumn + 1).AddToNotAllowedSymbols(CurrentSymbol)
+                            self.__GetCell(StartRow - 2, StartColumn).AddToNotAllowedSymbols(CurrentSymbol)
+                            self.__GetCell(StartRow - 1, StartColumn).AddToNotAllowedSymbols(CurrentSymbol)
+                            self.__GetCell(StartRow - 1, StartColumn + 1).AddToNotAllowedSymbols(CurrentSymbol)
+                            return 10
+                except:
+                    pass
+        return 0
 
     def __GetSymbolFromUser(self):
         Symbol = ""
@@ -260,9 +238,6 @@ class Cell():
 
     def AddToNotAllowedSymbols(self, SymbolToAdd):
         self.__SymbolsNotAllowed.append(SymbolToAdd)
-
-    def ResetNotAllowedSymbols(self, SymbolToAllow):
-        self.__SymbolsNotAllowed.remove(SymbolToAllow)
 
     def UpdateCell(self):
         pass
