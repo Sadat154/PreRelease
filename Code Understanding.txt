@@ -27,5 +27,6 @@ Problem with code:
 - Immediately takes a turn away even if the turn did nothing/had no effect, should it do this?
 - The code just adds points, doesnt minus points, the way it works, if a pattern is removed and redone it will add 10, moreover only checks
 for new patterns, doesnt consider what has happened to previous patterns, wrong!
-
-Continue from line 127
+---
+Os.path.exists()
+os.remove()
