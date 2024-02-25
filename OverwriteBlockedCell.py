@@ -106,6 +106,8 @@ class Puzzle():
             Symbol = self.__GetSymbolFromUser()
             self.__SymbolsLeft -= 1
             CurrentCell = self.__GetCell(Row, Column)
+            if (CurrentCell.GetSymbol()) == '@':
+                self.__Score -= 5
             if CurrentCell.CheckSymbolAllowed(Symbol):
                 CurrentCell.ChangeSymbolInCell(Symbol)
                 AmountToAddToScore = self.CheckforMatchWithPattern(Row, Column)
@@ -193,26 +195,14 @@ class Pattern():
     def MatchesPattern(self, PatternString, SymbolPlaced):
         if SymbolPlaced != self.__Symbol:
             return False
-        PossiblePermutations = self.RotatePattern()
-        PatternString = PatternString.replace("-", "*").replace('@','*')
-
-        try:
-            if PatternString not in PossiblePermutations:
-                return False
-        except Exception as ex:
-            print(f"EXCEPTION in MatchesPattern: {ex}")
+        for Count in range(0, len(self.__PatternSequence)):
+            try:
+                if self.__PatternSequence[Count] == self.__Symbol and PatternString[Count] != self.__Symbol:
+                    return False
+            except Exception as ex:
+                print(f"EXCEPTION in MatchesPattern: {ex}")
         return True
 
-    def RotatePattern(self):
-        RotationPermutations = []
-        pattern = self.__PatternSequence
-        for i in range(4):
-            self.__PatternSequence = pattern[6:8] + pattern[:6] + pattern[-1]
-            pattern = self.__PatternSequence
-            RotationPermutations.append(pattern)
-
-
-        return RotationPermutations
     def GetPatternSequence(self):
         return self.__PatternSequence
 
@@ -255,8 +245,8 @@ class BlockedCell(Cell):
         super(BlockedCell, self).__init__()
         self._Symbol = "@"
 
-    def CheckSymbolAllowed(self, SymbolToCheck):
-        return False
+    #def CheckSymbolAllowed(self, SymbolToCheck):
+    #    return False
 
 
 if __name__ == "__main__":

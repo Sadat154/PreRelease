@@ -6,7 +6,7 @@
 import random
 import os
 
-
+#Incomplete but its easy
 def Main():
     Again = "y"
     Score = 0
@@ -193,26 +193,14 @@ class Pattern():
     def MatchesPattern(self, PatternString, SymbolPlaced):
         if SymbolPlaced != self.__Symbol:
             return False
-        PossiblePermutations = self.RotatePattern()
-        PatternString = PatternString.replace("-", "*").replace('@','*')
-
-        try:
-            if PatternString not in PossiblePermutations:
-                return False
-        except Exception as ex:
-            print(f"EXCEPTION in MatchesPattern: {ex}")
+        for Count in range(0, len(self.__PatternSequence)):
+            try:
+                if self.__PatternSequence[Count] == self.__Symbol and PatternString[Count] != self.__Symbol:
+                    return False
+            except Exception as ex:
+                print(f"EXCEPTION in MatchesPattern: {ex}")
         return True
 
-    def RotatePattern(self):
-        RotationPermutations = []
-        pattern = self.__PatternSequence
-        for i in range(4):
-            self.__PatternSequence = pattern[6:8] + pattern[:6] + pattern[-1]
-            pattern = self.__PatternSequence
-            RotationPermutations.append(pattern)
-
-
-        return RotationPermutations
     def GetPatternSequence(self):
         return self.__PatternSequence
 

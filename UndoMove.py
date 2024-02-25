@@ -106,16 +106,21 @@ class Puzzle():
             Symbol = self.__GetSymbolFromUser()
             self.__SymbolsLeft -= 1
             CurrentCell = self.__GetCell(Row, Column)
-
-            if CurrentCell.GetSymbol() == "@": #NEW
-                self.__Score -= 5 #NEW
-                CurrentCell.ChangeSymbolInCell(Symbol) #NEW
-
-            elif CurrentCell.CheckSymbolAllowed(Symbol):
+            OldSymbol = CurrentCell.GetSymbol()
+            if CurrentCell.CheckSymbolAllowed(Symbol):
                 CurrentCell.ChangeSymbolInCell(Symbol)
                 AmountToAddToScore = self.CheckforMatchWithPattern(Row, Column)
                 if AmountToAddToScore > 0:
                     self.__Score += AmountToAddToScore
+                UndoChoice = input("Would you like to undo your move? (Y/N)")
+                if UndoChoice == 'Y':
+                    if CurrentCell.CheckSymbolAllowed(OldSymbol):
+                        CurrentCell.ChangeSymbolInCell(OldSymbol)
+                        #SCORE WILL BE INCORRECT, NEED TO ADD CODE TO ADJUST SCORE (easy way to do this is make checkformatch check everything again and redo points
+                        # or the following method
+                        if AmountToAddToScore > 0:
+                            self.__Score -= AmountToAddToScore
+                            
             if self.__SymbolsLeft == 0:
                 Finished = True
         print()
