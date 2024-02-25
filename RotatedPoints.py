@@ -211,7 +211,6 @@ class Pattern():
             pattern = self.__PatternSequence
             RotationPermutations.append(pattern)
 
-
         return RotationPermutations
     def GetPatternSequence(self):
         return self.__PatternSequence
