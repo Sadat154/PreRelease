@@ -6,7 +6,7 @@ Line 6-8: The patterns themselves, note that the format is a spiral from top lef
 Line 9: The grid size e.g., 5 = 5x5 Gri
 Line 10: Following 25 Lines simply represent each cell, going from left to right for every row
 2nd Last Line = Score
-Last Line = Turns left
+Last Line = No. turns left
 
 Understand that the rows go from 5-1 and columns from 1-5
 

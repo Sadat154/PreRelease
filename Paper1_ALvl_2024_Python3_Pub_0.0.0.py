@@ -104,7 +104,9 @@ class Puzzle():
             Symbol = self.__GetSymbolFromUser()
             self.__SymbolsLeft -= 1
             CurrentCell = self.__GetCell(Row, Column)
+
             if CurrentCell.CheckSymbolAllowed(Symbol):
+
                 CurrentCell.ChangeSymbolInCell(Symbol)
                 AmountToAddToScore = self.CheckforMatchWithPattern(Row, Column)
                 if AmountToAddToScore > 0:
